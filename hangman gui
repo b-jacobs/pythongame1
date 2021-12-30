@@ -1,0 +1,225 @@
+Tzomet CyberWise A21
+Python Final Project
+Leo J.
+•
+Nov 24
+100/100
+100 points out of possible 100
+Due Dec 5, 9:00 PM
+Class comments
+Your work
+Graded
+
+Hangmanfinal.py
+Text
+6 private comments
+
+Benjamin JacobsDec 4
+Version 3 - updated with some error handling with try/except, and also added two features 
+1 Menu bar
+2 popup window with option to play again when game finishes
+
+Leo J.Dec 8
+Great job!
+
+Leo J.Dec 8
+Just a quick question: How could you hide from the user the words in "word_list"?
+
+Benjamin JacobsDec 8
+i could have hosted them somewhere, and downloaded them... but didn't know how well all that would work on other pc's especially if not connected to net, which would be the sage way to test these.....
+could have also just included a big text doc with a bunch of words, and have the program scan it for a random word, but wasn't sure how to inlcude it all in one file to subimit....
+
+Benjamin JacobsDec 9
+is that answer above sufficient? or do i need to go into more detail?
+
+Leo J.Dec 13
+Great. enough
+
+Python Final Project
+from tkinter import *
+import random
+window = Tk()
+window.title('Best Hangman EVER')
+window.geometry("280x400")
+
+def close_game():
+    window.quit()
+
+
+def game_play():
+
+
+    def game_over_msgbx():  # this is the game over message box that appears once someone wins or looses,they can choose to quit or play again
+        global pop
+        pop = Toplevel(window)
+        pop.title("Game Over")
+        pop.geometry("250x180")
+        if game_won == "yes":
+            pop_label = Label(pop, text="Congratulations! You won!\nYour word was '{}'".format(random_word), fg="black",
+                              font=("helvetica", 12))
+        else:
+            pop_label = Label(pop, text="Sorry, you lost!\nYour word was '{}'".format(random_word), fg="black",
+                              font=("helvetica", 12))
+        pop_label.pack()
+        pop_label1 = Label(pop, text="Would You Like To Play Again?", fg="black", font=("helvetica", 10))
+        pop_label1.pack()
+        pop_label2 = Label(pop, text="(With a different word, of course!)", fg="black", font=("helvetica", 9))
+        pop_label2.pack()
+        my_frame = Frame(pop)
+        my_frame.pack(pady=5)
+        play_again = Button(my_frame, text="Yes", command=lambda: [game_restart(), game_play()])
+        play_again.pack(padx=10, ipadx=20)
+        close = Button(my_frame, text="No Thanks", command=close_game)
+        close.pack(padx=10, pady=10)
+
+# this clears the old game when a new one starts
+    def game_restart():
+        pos_2.destroy()
+        pos_3.destroy()
+        pos_4.destroy()
+        pos_6.destroy()
+        pos_7.destroy()
+        pos_8.destroy()
+        pos_9.destroy()
+        pos_10.destroy()
+
+    # this deletes the Game Over popup, if it exists
+    try:
+        if pop.winfo_exists():
+            pop.destroy()
+    except:
+        pass
+#Creates the Menu once started playing
+    my_menu = Menu(window)
+    window.config(menu=my_menu)
+    options_menu = Menu(my_menu, tearoff=False)
+    my_menu.add_cascade(label="Options", menu=options_menu)
+    options_menu.add_command(label="Restart", command=lambda:[game_restart(), game_play()])
+    options_menu.add_command(label="Quit", command=window.destroy)
+
+# Actual game play below - I put it in one big try/except because its got a lot of moving pieces
+# - but i don't think it'll break ;)
+    try:
+        word_list = ['fast', 'apple', 'family', 'time', 'person', 'year', 'way', 'day', 'thing', 'man', 'world', 'life', 'hand', 'part']  # can add more words to list - POC for now
+        random_word = random.choice(word_list)
+        random_word_plchldr = random_word
+        blank_word = ""
+
+        for i in range(len(random_word)):
+            blank_word += ("_ ")
+
+        guessed_list = []
+        total_guesses = 0
+        empty_letter = "_"
+        var = IntVar()
+
+        while empty_letter in blank_word and total_guesses < 12:
+            if len(guessed_list) == 0:  # for first time entering a letter
+                pos_1.config(text=f"Your SECRET WORD has {len(random_word)} letters in it.\nYou are allowed 12 wrong guesses.\nGood luck!", padx=40)
+                pos_2 = Label(window, text="Guess a letter:", pady=5, padx=75)
+                pos_2.pack()
+                pos_3 = Entry(window, width=15)
+                pos_3.bind("<Return>", (lambda event: var.set(1)))
+                pos_3.pack(padx=70, pady=5)
+                pos_4 = Button(window, text="Submit Letter", command=lambda: var.set(1))
+                pos_4.pack(padx=70, pady=5)
+                pos_6 = LabelFrame(window, width=150)
+                pos_6.pack(padx=70, pady=5, ipady=5)
+                pos_7 = Label(pos_6, text="SECRET WORD:", font=('Arial', 12))
+                pos_7.pack(pady=5)
+                pos_8 = Label(pos_6, text=blank_word, font=('Arial', 14))
+                pos_8.pack(pady=5)
+                pos_9 = LabelFrame(window, width=50, pady=5)
+                pos_10 = Label(pos_9, pady=5)
+                pos_4.wait_variable(var)
+                total_guesses += 1
+            else:# updates text of all relevant fields for all the rest of the selections
+                pos_2.config(text=f"You've got {12 - total_guesses} guesses left.\nGuess another letter:")
+                pos_6.pack(padx=70)
+                pos_7.config(text="SECRET WORD", font=('Arial', 12))
+                pos_8.config(text=blank_word)
+                pos_9.config(text="Previous Guesses:")
+                pos_9.pack()
+                pos_10.config(text=str(', '.join(guessed_list)))
+                pos_10.pack()
+                pos_4.wait_variable(var)
+                total_guesses += 1
+
+            guess = pos_3.get().lower().strip()
+            pos_3.delete(0, END)
+            # this if section is the part that checks the letter submission - makes sure it's one letter, and then evaluates if it's in the word
+            if not guess.isalpha():
+                pos_1.config(text="Enter ONLY letters!\nThat still cost you a turn though!")
+            elif len(guess) > 1:
+                pos_1.config(text="You entered too many letters!\n Only enter one at a time!)")
+                pos_2.config(text="(Sorry, but that still cost you a guess...)\nTry again:")
+            elif guess in guessed_list:
+                pos_1.config(text="You already guessed that!\nThat still cost you a turn!")
+                pos_2.config(text="Try again:")
+            elif guess in random_word:
+                total_guesses -= 1
+                pos_1.config(text="Good guess!")
+                pos_2.config(text="Guess another letter:")
+
+                while guess in random_word_plchldr:#section to update the "blank word" object so players can see correct guesses in the word
+                    for i in random_word_plchldr:
+                        if guess == i:
+                            guessplcmnt = random_word_plchldr.find(guess) + 1
+                            blankindex = guessplcmnt * 2 - 1
+                            # strings are immutable!!! couldn't use replace, had to slice the strings to update... took me a while to get that working
+                            blank_word = blank_word[:blankindex - 1] + guess + blank_word[blankindex:]
+                            random_word_plchldr = random_word_plchldr[:guessplcmnt - 1] + "9" + random_word_plchldr[guessplcmnt:]
+            else:
+                pos_1.config(text="\nSorry, that letter isn't in the word!")
+
+            guessed_list.append(guess)
+
+            if empty_letter not in blank_word:
+                pos_2.config(text=f"Congratulations! You found the word!\nIt was '{random_word}'.\nGAME OVER")
+                pos_8.config(text=blank_word)
+                pos_3.destroy()
+                pos_4.destroy()
+                pos_9.destroy()
+                pos_10.destroy()
+                game_won = "yes"
+                game_over_msgbx()
+            if total_guesses == 12:
+                pos_1.config(text=f"Sorry! That's all you're guesses!\n Your word was '{random_word}'.")
+                pos_2.config(text="Better luck next time.")
+                pos_3.destroy()
+                pos_4.destroy()
+                pos_7.config(text="GAME OVER")
+                pos_9.destroy()
+                pos_10.destroy()
+                pos_8.config(text=random_word)
+                game_won = "no"
+                game_over_msgbx()
+    except:
+        print("Error in game play. Try again later?")
+
+# the below is it's own separate function intentionally,
+# it was the way i figured out how to wait using the '.after' method, since
+# sleep() doesn't work in tkinter the same way it does in text based interface.
+def play_request(yes_or_no):
+    if yes_or_no == 'no':
+        pos_2a.destroy()
+        pos_2b.destroy()
+        pos_1.config(text="OK Goodbye")
+        window.after(2000, close_game)
+    else:
+        pos_2a.destroy()
+        pos_2b.destroy()
+        pos_1.config(text="Great! Lets play!", padx=70, pady=10)
+        window.after(1000, lambda: game_play())
+
+
+pos_1 = Label(window, text="Do you want to play Hangman?")
+pos_1.pack(padx=40, pady=10)
+pos_2a = Button(window, text="Yes", width=10, command=lambda: play_request('yes'))
+pos_2a.pack(pady=10, padx=15, ipady=5)
+pos_2b = Button(window, text="Maybe later", width=10, command=lambda: play_request('no'))
+pos_2b.pack(pady=10, padx=15, ipady=5)
+
+window.mainloop()
+Hangmanfinal.py
+Displaying Hangmanfinal.py.
