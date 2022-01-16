@@ -1,41 +1,3 @@
-Tzomet CyberWise A21
-Python Final Project
-Leo J.
-•
-Nov 24
-100/100
-100 points out of possible 100
-Due Dec 5, 9:00 PM
-Class comments
-Your work
-Graded
-
-Hangmanfinal.py
-Text
-6 private comments
-
-Benjamin JacobsDec 4
-Version 3 - updated with some error handling with try/except, and also added two features 
-1 Menu bar
-2 popup window with option to play again when game finishes
-
-Leo J.Dec 8
-Great job!
-
-Leo J.Dec 8
-Just a quick question: How could you hide from the user the words in "word_list"?
-
-Benjamin JacobsDec 8
-i could have hosted them somewhere, and downloaded them... but didn't know how well all that would work on other pc's especially if not connected to net, which would be the sage way to test these.....
-could have also just included a big text doc with a bunch of words, and have the program scan it for a random word, but wasn't sure how to inlcude it all in one file to subimit....
-
-Benjamin JacobsDec 9
-is that answer above sufficient? or do i need to go into more detail?
-
-Leo J.Dec 13
-Great. enough
-
-Python Final Project
 from tkinter import *
 import random
 window = Tk()
@@ -221,5 +183,3 @@ pos_2b = Button(window, text="Maybe later", width=10, command=lambda: play_reque
 pos_2b.pack(pady=10, padx=15, ipady=5)
 
 window.mainloop()
-Hangmanfinal.py
-Displaying Hangmanfinal.py.
